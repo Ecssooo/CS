@@ -1,4 +1,6 @@
+using Unity.VisualScripting;
 using UnityEngine;
+using Vector3 = System.Numerics.Vector3;
 
 public struct MonVector
 {
@@ -10,6 +12,8 @@ public struct MonVector
     public float Y { get => _y; set => _y = value; }
     public float Z { get => _z; set => _z = value; }
     
+    public static MonVector operator +(MonVector a, MonVector b) => new MonVector(a.X += b.X, a.Y += b.Y, a.Z += b.Z);
+    public static MonVector operator /(MonVector a, float b) => new MonVector(a.X /= b, a.Y /= b, a.Z /= b);
     
     public MonVector(float x, float y, float z)
     {
@@ -18,35 +22,18 @@ public struct MonVector
         _z = z;
     }
     
-    public float Magnitude
-    {
-        get { return _x * _x + _y * _y; }
-    }
+    public float Magnitude { get { return Mathf.Sqrt(_x * _x + _y * _y + _z * _z); } }
 
-    public float SqrMagnitude
-    {
-        get { return Mathf.Sqrt(Magnitude); }
-    }
+    public float SqrMagnitude { get { return _x * _x + _y * _y + _z * _z; } }
 
-    public MonVector Normalized
+    public MonVector Normalized()
     {
-        get
+        float magn = Magnitude;
+        if (magn > 0)
+            return this / magn;
+        else
         {
-            MonVector vector = this;
-            vector.X /= Mathf.Abs(vector.X);
-            vector.Y /= Mathf.Abs(vector.Y);
-            vector.Z /= Mathf.Abs(vector.Z);
-            return vector;
+            return new MonVector(0, 0, 0);
         }
-    }
-    
-    
-    public MonVector _Normalized(MonVector vector)
-    {
-        vector.X /= Mathf.Abs(vector.X);
-        vector.Y /= Mathf.Abs(vector.Y);
-        vector.Z /= Mathf.Abs(vector.Z);
-
-        return vector;
     }
 }
