@@ -1,4 +1,4 @@
-using System;
+using Codice.Client.BaseCommands;
 using NaughtyAttributes;
 using UnityEngine;
 using UnityEngine.Events;
@@ -15,10 +15,10 @@ public class Health : MonoBehaviour
     
     [ShowIf("showLife"), SerializeField, MinValue(0), ProgressBar("Health", "_maxHealth", EColor.Green)]
     private int _currentHealth;
-    public int CurrentHealth { get => _maxHealth; set => _currentHealth = value; }
-    
+    public int CurrentHealth { get => _currentHealth; set => _currentHealth = value; }
     // [SerializeField] private UnityEvent _onDie;
-
+    public event UnityAction OnTakeDamage;
+    
     private void Start()
     {
         InitHealth();
@@ -33,30 +33,30 @@ public class Health : MonoBehaviour
         _currentHealth = _maxHealth;
     }
     
-    public int Regeneration(int value)
+    public void Regeneration(int value)
     {
         if (value <= 0)
         {
             Debug.LogWarning("Negative value can't heal");
-            return _currentHealth;
+            return;
         }
-        int newLife = _currentHealth;
-        if (newLife + value > _maxHealth)
-            return _maxHealth;
-        return newLife + value;
+        if (_currentHealth + value > _maxHealth)
+            _currentHealth = _maxHealth;
+        _currentHealth += value;
+        OnTakeDamage.Invoke();
     }
     
-    public int TakeDamage(int value)
+    public void TakeDamage(int value)
     {
         if (value <= 0)
         {
             Debug.LogWarning("Negative value can't make damage");
-            return _currentHealth;
+            return;
         }
-        int newLife = _currentHealth;
-        if (newLife - value < 0)
-            return 0;
-        return newLife - value;
+        if (_currentHealth - value < 0)
+            _currentHealth = 0;
+        _currentHealth -= value;
+        OnTakeDamage.Invoke();
     }
 
     public void Die()
@@ -77,9 +77,9 @@ public class Health : MonoBehaviour
     [Button, ShowIf("showLife")]
     void GetHealth() => Debug.Log(_currentHealth);
     [Button, ShowIf("showLife")]
-    void TakeDamage() => _currentHealth = TakeDamage(10);
+    void TakeDamage() => TakeDamage(10);
     [Button, ShowIf("showLife")]
-    void Regeneration() =>  _currentHealth = Regeneration(10);
+    void Regeneration() =>  Regeneration(10);
 
     private void UnityMeCasseLesCouilles()
     {

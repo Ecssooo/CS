@@ -8,8 +8,7 @@ public class MainScript : MonoBehaviour
     {
         _monVector = new MonVector(3, 4, 0);
         Debug.Log(_monVector.Magnitude);
-        MonVector newVector = _monVector.Normalized();
-        Debug.Log(newVector.Magnitude);
+        _monVector.Normalized();
 
         Vector3 vector3 = new Vector3(3, 4, 0);
         Debug.Log(vector3.magnitude);
