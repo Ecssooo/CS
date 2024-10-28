@@ -14,6 +14,7 @@ public struct MonVector
     
     //Operator
     public static MonVector operator +(MonVector a, MonVector b) => new MonVector(a.X += b.X, a.Y += b.Y, a.Z += b.Z);
+    public static MonVector operator -(MonVector a, MonVector b) => new MonVector(a.X -= b.X, a.Y -= b.Y, a.Z -= b.Z);
     public static MonVector operator /(MonVector a, float b) => new MonVector(a.X /= b, a.Y /= b, a.Z /= b);
     public static MonVector operator *(MonVector a, float b) => new MonVector(a.X *= b, a.Y *= b, a.Z *= b);
     

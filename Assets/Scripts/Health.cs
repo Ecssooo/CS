@@ -1,69 +1,58 @@
-using Codice.Client.BaseCommands;
+using System;
 using NaughtyAttributes;
 using UnityEngine;
 using UnityEngine.Events;
 
 public class Health : MonoBehaviour
 {
+    [Header("Player Infos")]
+    [SerializeField] private Player _player;
     
     [Header("Health Settings")]
     [SerializeField, MinValue(0)] int _maxHealth;
     public int MaxHealth { get => _maxHealth;}
 
-    [Header("InGame Infos")]
-    [SerializeField] private bool showLife;
-    
-    [ShowIf("showLife"), SerializeField, MinValue(0), ProgressBar("Health", "_maxHealth", EColor.Green)]
-    private int _currentHealth;
-    public int CurrentHealth { get => _currentHealth; set => _currentHealth = value; }
-    // [SerializeField] private UnityEvent _onDie;
-    public event UnityAction OnTakeDamage;
-    
-    private void Start()
-    {
-        InitHealth();
-        UnityMeCasseLesCouilles();
-    }
+    [SerializeField] private UnityEvent _onDie;
+    public event Action<int> OnHealthUpdate;
 
-
+  
     #region Health Method
-
-    void InitHealth()
-    {
-        _currentHealth = _maxHealth;
-    }
     
-    public void Regeneration(int value)
+    public int GetHealth() => _player.CurrentLife;
+    
+    public int Regeneration(int value)
     {
         if (value <= 0)
         {
             Debug.LogWarning("Negative value can't heal");
-            return;
+            return GetHealth();
         }
-        if (_currentHealth + value > _maxHealth)
-            _currentHealth = _maxHealth;
-        _currentHealth += value;
-        OnTakeDamage.Invoke();
+        int currentLife = GetHealth();
+        if (currentLife + value > _maxHealth)
+            return _maxHealth;
+        OnHealthUpdate.Invoke(currentLife + value);
+        return currentLife + value;
     }
     
-    public void TakeDamage(int value)
+    public int TakeDamage(int value)
     {
         if (value <= 0)
         {
             Debug.LogWarning("Negative value can't make damage");
-            return;
+            return GetHealth();
         }
-        if (_currentHealth - value < 0)
-            _currentHealth = 0;
-        _currentHealth -= value;
-        OnTakeDamage.Invoke();
+        int currentLife = GetHealth();
+        if (currentLife - value < 0)
+            return 0;
+        OnHealthUpdate.Invoke(currentLife - value);
+        return currentLife - value;
     }
 
     public void Die()
     {
-        if (_currentHealth <= 0)
+        if (GetHealth() <= 0)
         {
-            //_onDie.Invoke();
+            _onDie.Invoke();
             Destroy(gameObject, 2f);
         }
     }
@@ -71,25 +60,13 @@ public class Health : MonoBehaviour
     
     
     #region Inspector test
-    
-    #region Button
 
-    [Button, ShowIf("showLife")]
-    void GetHealth() => Debug.Log(_currentHealth);
-    [Button, ShowIf("showLife")]
-    void TakeDamage() => TakeDamage(10);
-    [Button, ShowIf("showLife")]
-    void Regeneration() =>  Regeneration(10);
-
-    private void UnityMeCasseLesCouilles()
+    private void Reset()
     {
-        if (!showLife)
-        {
-            showLife = true;
-        }
+        _player = GetComponent<Player>();
+        if(_player == null)
+            Debug.LogError("Component 'Player' needed in 'Health' component");
     }
-    
-    #endregion
 
     #endregion
 }
