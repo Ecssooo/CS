@@ -1,13 +1,8 @@
 using System;
 using System.Collections;
-using System.Collections.Generic;
 using NaughtyAttributes;
-using NUnit.Framework;
-using TMPro;
 using UnityEngine;
 using UnityEngine.Events;
-using UnityEngine.InputSystem.Processors;
-using UnityEngine.Serialization;
 
 public class Health : MonoBehaviour
 {
@@ -55,13 +50,15 @@ public class Health : MonoBehaviour
     /// <param name="value">HP to add</param>
     public void Regeneration(int value)
     {
-        if (value <= 0)
-            Debug.LogWarning("Negative value can't heal");
+        if (value < 0) { throw new ArgumentException("value must be positive", "value"); }
+        
         _currentHealth += value;
-        if (_currentHealth > _maxHealth) 
+        if (_currentHealth > _maxHealth)
+        {
             _currentHealth = _maxHealth;
+        } 
         OnHealthUpdate?.Invoke(_currentHealth);
-        OnRegeneration.Invoke();
+        OnRegeneration?.Invoke();
     }
     
     /// <summary>
@@ -70,23 +67,23 @@ public class Health : MonoBehaviour
     /// <param name="value">HP to remove</param>
     public void TakeDamage(int value)
     {
-        if (value <= 0) 
-            Debug.LogWarning("Negative value can't make damage"); 
+        if (value < 0) throw new ArgumentException("value must be positive", "value");
+        
         _currentHealth -= value;
         if (_currentHealth < 0)
         {
-            OnDie.Invoke();
+            OnDie?.Invoke();
             _currentHealth = 0;
         }
         OnHealthUpdate?.Invoke(_currentHealth);
-        OnTakeDamage.Invoke();
+        OnTakeDamage?.Invoke();
     }
 
     /// <summary>
     /// Check if player is dead
     /// Y : Invoke Event, Destroy GameObject
     /// </summary>
-    public void CheckIfDead()
+    public bool CheckIfDead()
     {
         if (_currentHealth <= 0)
         {
@@ -94,13 +91,20 @@ public class Health : MonoBehaviour
             IEnumerator Die()
             {
                 _isDead = true;
-                OnDie.Invoke();
+                OnDie?.Invoke();
                 
                 yield return new WaitForSeconds(1f);
                 Destroy(_parentToDestroy);
-                
             }
         }
+        return _isDead;
     }
+    
     #endregion
+
+    public void InitComponent(int maxHealth)
+    {
+        _maxHealth = maxHealth;
+        InitCurrentHealth();
+    }
 }
