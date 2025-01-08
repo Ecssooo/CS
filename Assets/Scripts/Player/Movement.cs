@@ -9,7 +9,8 @@ public enum MovementStates
 {
     Walk,
     Run,
-    NoStamina
+    NoStamina,
+    CantMove
 }
 
 public class Movement : MonoBehaviour
@@ -46,8 +47,6 @@ public class Movement : MonoBehaviour
     private MovementStates _currentMovementState;
     public MovementStates CurrentMovementStates { get => _currentMovementState; set => _currentMovementState = value; }
     
-    private bool _canMove = true;
-    
     private bool _isMoving;
     public bool IsMoving => _isMoving;
     
@@ -65,7 +64,7 @@ public class Movement : MonoBehaviour
 
     private void FixedUpdate()
     {
-        if(_canMove)
+        if(_currentMovementState != MovementStates.CantMove)
             ApplySpeed();
     }
 
@@ -127,11 +126,6 @@ public class Movement : MonoBehaviour
             _player.StaminaController.IncreaseStamina(_player.StaminaController.IncreaseStaminaInTime * Time.deltaTime);
             OnEndRun?.Invoke();
         }
-    }
-
-    public void CanMove()
-    {
-        _canMove = !_canMove;
     }
     
     #region Inspector test

@@ -5,6 +5,7 @@ using NaughtyAttributes;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
+
 [RequireComponent(typeof(Movement),typeof(Health), typeof(Stamina))]
 public class Player : MonoBehaviour
 {
@@ -14,7 +15,7 @@ public class Player : MonoBehaviour
     [SerializeField, Required, Label("Stamina")] private Stamina _staminaController;
     
     public Movement MovementController { get => _movementController; }
-
+    
     public Health HealthController { get => _healthController; }
 
     public Stamina StaminaController { get => _staminaController; }
