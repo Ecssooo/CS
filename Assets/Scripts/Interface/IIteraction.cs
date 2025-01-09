@@ -1,8 +1,16 @@
 using UnityEngine;
 
+public enum InputStates
+{
+    NoInput,
+    InputStarted,
+    InputPerformed
+}
+
+
 public interface IIteraction
 {
-    bool InputPerformed { get; set; }
+    InputStates InputState { get; set; }
     
     void StartInteraction(InteractableDetector id);
     void EndInteraction(InteractableDetector id);

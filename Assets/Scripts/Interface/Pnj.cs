@@ -19,12 +19,12 @@ public class Pnj : MonoBehaviour, IIteraction
     private bool _canTalk;
     private int nextSentencesIndex;
     
-    [SerializeField] private bool _inputPerformed;
-    public bool InputPerformed { get; set; }
+    [SerializeField] private InputStates _inputState;
+    public InputStates InputState { get; set; }
     
     private void Start()
     {
-        InputPerformed = _inputPerformed;
+        InputState = _inputState;
         nextSentencesIndex = 0;
     }
 

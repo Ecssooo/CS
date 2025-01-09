@@ -12,14 +12,21 @@ public class InteractableDetector : MonoBehaviour
     {
         if (other.TryGetComponent(out IIteraction interactable))
         {
-            if (_interact)
+            if (interactable.InputState == InputStates.NoInput)
             {
-                interactable.StartInteraction(this);
-                if (!interactable.InputPerformed) _interact = false;
+                interactable.StartInteraction(this);  
             }
-            else if(!_interact && interactable.InputPerformed)
+            else
             {
-                interactable.EndInteraction(this);
+                if (_interact)
+                {
+                    interactable.StartInteraction(this);
+                    if (interactable.InputState == InputStates.InputStarted) _interact = false;
+                }
+                else if(!_interact && interactable.InputState == InputStates.InputPerformed)
+                {
+                    interactable.EndInteraction(this);
+                }
             }
         }
     }

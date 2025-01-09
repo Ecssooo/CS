@@ -5,7 +5,6 @@ using UnityEngine.Events;
 public class Chest : MonoBehaviour, IIteraction
 {
 
-    [SerializeField] private bool _inputPerformed;
     [SerializeField] private float _timeToOpen;
     [SerializeField] private int _healthValue;
     [SerializeField] private UnityEvent _onChestOpen;
@@ -15,11 +14,12 @@ public class Chest : MonoBehaviour, IIteraction
     private enum ChestStates{ Open, Close}
     private ChestStates s_chestStates = ChestStates.Close;
     
-    public bool InputPerformed { get; set; }
+    [SerializeField] private InputStates _inputState;
+    public InputStates InputState { get; set; }
 
     private void Start()
     {
-        InputPerformed = _inputPerformed;
+        InputState = _inputState;
     }
 
     public void StartInteraction(InteractableDetector id)

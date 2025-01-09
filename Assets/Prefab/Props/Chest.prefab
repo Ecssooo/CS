@@ -66,7 +66,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e2c4dbf0b48b49645b12347f38dc4b75, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _inputPerformed: 1
   _timeToOpen: 1
   _healthValue: 10
   _onChestOpen:
@@ -84,6 +83,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+  _inputState: 2
 --- !u!1 &8925798623882069797
 GameObject:
   m_ObjectHideFlags: 0
